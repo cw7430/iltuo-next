@@ -1,5 +1,5 @@
-import { type ResponseCodeType } from '@/common/api/constants';
-import { ValidationError } from '@/common/api/schema';
+import { type ResponseCodeType } from '@/common/api/shared/constants';
+import { ValidationError } from '@/common/api/shared/schema';
 
 export class ApiError extends Error {
   public readonly code: Exclude<ResponseCodeType, 'SU'>;

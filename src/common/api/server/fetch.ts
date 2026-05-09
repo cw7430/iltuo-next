@@ -1,5 +1,45 @@
 import 'server-only';
-import { serverFetch, resolveBody, type ServerFetchOptions } from './fetch';
+
+import {
+  fetchResponse,
+  resolveUrl,
+  resolveContentType,
+  resolveCacheOptions,
+  resolveAuthOptions,
+  resolveBody,
+  API_BASE_URL,
+  type ServerFetchOptions,
+} from '@/common/api/shared/fetch';
+
+const serverFetch = async <T>(
+  input: string,
+  options: ServerFetchOptions = {},
+): Promise<T> => {
+  const {
+    authType = 'none',
+    cacheStrategy,
+    contentType = 'json',
+    baseUrl = API_BASE_URL,
+    ...init
+  } = options;
+
+  const bearerToken = await resolveAuthOptions(authType);
+  const cacheOptions = resolveCacheOptions(cacheStrategy);
+  const contentOptions = resolveContentType(contentType);
+  const urlOptions = resolveUrl('server', input, baseUrl);
+
+  const res = await fetch(urlOptions, {
+    ...init,
+    ...cacheOptions,
+    headers: {
+      ...(contentOptions && { 'Content-Type': contentOptions }),
+      ...(bearerToken && { Authorization: `Bearer ${bearerToken}` }),
+      ...init?.headers,
+    },
+  });
+
+  return fetchResponse(res);
+};
 
 export const ServerRequest = {
   apiGet: async <T>(

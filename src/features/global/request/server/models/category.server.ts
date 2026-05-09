@@ -1,12 +1,10 @@
+import { ServerRequest } from '@/common/api/server';
+import { responseWithResult } from '@/common/api/shared/fetch';
+import { ApiError } from '@/common/api/shared/error';
+import type { ApiSuccessWithResult } from '@/common/api/shared/schema';
+import { ResponseCode } from '@/common/api/shared/constants';
 import {
-  ApiError,
-  ServerRequest,
-  responseWithResult,
-} from '@/common/api/configs';
-import type { ApiSuccessWithResult } from '@/common/api/schema';
-import { ResponseCode } from '@/common/api/constants';
-import {
-  categoryResponseSchema,
+  categoryListResponseSchema,
   type CategoryListResponseDto,
 } from '@/features/global/schema';
 
@@ -26,7 +24,7 @@ export const getCategories = async () =>
       );
     }
 
-    const validation = categoryResponseSchema.safeParse(res.result);
+    const validation = categoryListResponseSchema.safeParse(res.result);
 
     if (!validation.success) {
       throw new ApiError(

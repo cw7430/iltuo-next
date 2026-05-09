@@ -1,5 +1,32 @@
 import 'client-only';
-import { clientFetch, resolveBody, type ClientFetchOptions } from './fetch';
+import {
+  fetchResponse,
+  resolveUrl,
+  resolveContentType,
+  resolveBody,
+  type ClientFetchOptions,
+} from '@/common/api/shared/fetch';
+
+const clientFetch = async <T>(
+  input: string,
+  options: ClientFetchOptions = {},
+): Promise<T> => {
+  const { contentType = 'json', baseUrl, ...init } = options;
+
+  const contentOptions = resolveContentType(contentType);
+  const urlOptions = resolveUrl('client', input, baseUrl);
+
+  const res = await fetch(urlOptions, {
+    ...init,
+    credentials: 'include',
+    headers: {
+      ...(contentOptions && { 'Content-Type': contentOptions }),
+      ...init?.headers,
+    },
+  });
+
+  return fetchResponse(res);
+};
 
 export const ClientRequest = {
   apiGet: async <T>(
