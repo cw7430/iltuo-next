@@ -1,1 +1,1 @@
-export * from './category.server';
+export { getCategories } from './category.server';

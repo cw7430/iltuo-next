@@ -2,9 +2,12 @@ import {
   ResponseSingle,
   ResponseWithResult,
   ValidationError,
-} from '@/common/api/schema';
-import { ResponseCode, type ResponseCodeType } from '@/common/api/constants';
-import { ApiError } from './api-error';
+} from '@/common/api/shared/schema';
+import {
+  ResponseCode,
+  type ResponseCodeType,
+} from '@/common/api/shared/constants';
+import { ApiError } from '@/common/api/shared/error';
 
 const baseResponse = {
   code: ResponseCode.SUCCESS.code,
