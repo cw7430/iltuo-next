@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import '@/styles/style.css';
 import '@/styles/responsive.css';
 import '@/styles/jquery.mCustomScrollbar.min.css';
+import { ReactQueryProvider } from '@/common/components/layouts';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,7 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ReactQueryProvider>{children}</ReactQueryProvider>
+      </body>
     </html>
   );
 }

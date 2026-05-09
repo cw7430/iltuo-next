@@ -3,7 +3,7 @@ import { ResponseCode } from '@/common/api/shared/constants';
 
 import { getCategories } from '@/features/global/request/server/models';
 
-export default async function DefaultLayout({
+export default async function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -13,6 +13,6 @@ export default async function DefaultLayout({
   if (categories.code != ResponseCode.SUCCESS.code) {
     throw new ApiError(categories.code, categories.message);
   }
-  
+
   return <>{children}</>;
 }

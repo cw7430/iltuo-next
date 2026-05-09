@@ -3,4 +3,4 @@ export {
   categoryListResponseSchema,
   type CategoryListResponseDto,
   type CategoryResponseDto,
-} from './category.schema';
+} from './category';
