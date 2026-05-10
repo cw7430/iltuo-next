@@ -14,7 +14,9 @@ export const getRecommendedProducts = async () =>
   responseWithResult(async () => {
     const res = await apiGet<
       ApiSuccessWithResult<RecommendedProductListResponseDto>
-    >('/product/recommended');
+    >('/product/recommended', {
+      cacheStrategy: { type: 'tags', tags: ['init', 'products'] },
+    });
 
     if (!res?.result) {
       throw new ApiError(
@@ -23,10 +25,12 @@ export const getRecommendedProducts = async () =>
       );
     }
 
-    const validation = recommendedProductListResponseSchema.safeParse(res.result);
+    const validation = recommendedProductListResponseSchema.safeParse(
+      res.result,
+    );
 
     if (!validation.success) {
-      console.error(validation.error)
+      console.error(validation.error);
       throw new ApiError(
         ResponseCode.CUSTOM_VALIDATION_ERROR.code,
         ResponseCode.CUSTOM_VALIDATION_ERROR.message,

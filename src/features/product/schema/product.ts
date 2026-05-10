@@ -26,6 +26,8 @@ export const productListResponseSchema = categoryResponseSchema.extend({
   products: recommendedProductListResponseSchema,
 });
 
+export type ProductResponseDto = z.infer<typeof productResponseSchema>;
+
 export type RecommendedProductListResponseDto = z.infer<
   typeof recommendedProductListResponseSchema
 >;

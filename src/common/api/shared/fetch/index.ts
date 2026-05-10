@@ -4,9 +4,11 @@ export {
   resolveCacheOptions,
   resolveContentType,
   resolveUrl,
+  resloveQuery,
   resolveBody,
   fetchResponse,
-  type ServerFetchOptions,
-  type ClientFetchOptions,
+  type AuthType,
+  type CacheStrategy,
+  type ContentType,
 } from './fetch';
 export { responseSingle, responseWithResult } from './response';

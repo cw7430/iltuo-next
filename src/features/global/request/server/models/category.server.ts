@@ -12,10 +12,10 @@ const { apiGet } = ServerRequest;
 
 export const getCategories = async () =>
   responseWithResult(async () => {
-    const res =
-      await apiGet<ApiSuccessWithResult<CategoryListResponseDto>>(
-        '/categories',
-      );
+    const res = await apiGet<ApiSuccessWithResult<CategoryListResponseDto>>(
+      '/categories',
+      { cacheStrategy: { type: 'tags', tags: ['init', 'categories'] } },
+    );
 
     if (!res?.result) {
       throw new ApiError(
