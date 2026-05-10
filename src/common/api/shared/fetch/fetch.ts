@@ -3,28 +3,15 @@ import { cookies } from 'next/headers';
 import { ApiError } from '@/common/api/shared/error';
 import { ResponseCode } from '@/common/api/shared/constants';
 
-type CacheStrategy =
+export type CacheStrategy =
   | { type: 'no-store' }
   | { type: 'force-cache' }
   | { type: 'revalidate'; seconds: number }
   | { type: 'tags'; tags: string[] };
 
-type AuthType = 'access' | 'refresh' | 'none';
+export type AuthType = 'access' | 'refresh' | 'none';
 
-type ContentType = 'json' | 'form';
-
-export interface ServerFetchOptions extends RequestInit {
-  next?: NextFetchRequestConfig;
-  baseUrl?: string;
-  authType?: AuthType;
-  cacheStrategy?: CacheStrategy;
-  contentType?: ContentType;
-}
-
-export interface ClientFetchOptions extends RequestInit {
-  contentType?: ContentType;
-  baseUrl?: string;
-}
+export type ContentType = 'json' | 'form';
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -101,6 +88,18 @@ export const fetchResponse = async (res: Response) => {
   }
 
   return data;
+};
+
+export const resloveQuery = (
+  params?: Record<string, string | number | boolean | undefined>,
+) => {
+  return params
+    ? `?${new URLSearchParams(
+        Object.entries(params)
+          .filter(([, v]) => v !== undefined)
+          .map(([k, v]) => [k, String(v)]),
+      )}`
+    : '';
 };
 
 export const resolveBody = (body?: unknown, contentType?: ContentType) => {

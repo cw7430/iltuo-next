@@ -3,13 +3,19 @@ import {
   fetchResponse,
   resolveUrl,
   resolveContentType,
+  resloveQuery,
   resolveBody,
-  type ClientFetchOptions,
+  type ContentType,
 } from '@/common/api/shared/fetch';
+
+interface FetchOptions extends RequestInit {
+  contentType?: ContentType;
+  baseUrl?: string;
+}
 
 const clientFetch = async <T>(
   input: string,
-  options: ClientFetchOptions = {},
+  options: FetchOptions = {},
 ): Promise<T> => {
   const { contentType = 'json', baseUrl, ...init } = options;
 
@@ -31,16 +37,10 @@ const clientFetch = async <T>(
 export const ClientRequest = {
   apiGet: async <T>(
     input: string,
+    options?: Omit<FetchOptions, 'contentType'>,
     params?: Record<string, string | number | boolean | undefined>,
-    options?: Omit<ClientFetchOptions, 'contentType'>,
   ): Promise<T> => {
-    const query = params
-      ? `?${new URLSearchParams(
-          Object.entries(params)
-            .filter(([, v]) => v !== undefined)
-            .map(([k, v]) => [k, String(v)]),
-        )}`
-      : '';
+    const query = resloveQuery(params);
 
     return clientFetch<T>(`${input}${query}`, {
       method: 'GET',
@@ -50,8 +50,8 @@ export const ClientRequest = {
 
   apiPost: async <T, B = unknown>(
     input: string,
+    options?: FetchOptions,
     body?: B | FormData,
-    options?: ClientFetchOptions,
   ): Promise<T> => {
     return clientFetch<T>(input, {
       method: 'POST',
@@ -64,8 +64,8 @@ export const ClientRequest = {
 
   apiPut: async <T, B = unknown>(
     input: string,
+    options?: FetchOptions,
     body?: B | FormData,
-    options?: ClientFetchOptions,
   ): Promise<T> => {
     return clientFetch<T>(input, {
       method: 'PUT',
@@ -78,8 +78,8 @@ export const ClientRequest = {
 
   apiPatch: async <T, B = unknown>(
     input: string,
+    options?: FetchOptions,
     body?: B | FormData,
-    options?: ClientFetchOptions,
   ): Promise<T> => {
     return clientFetch<T>(input, {
       method: 'PATCH',
@@ -92,7 +92,7 @@ export const ClientRequest = {
 
   apiDelete: async <T = void>(
     input: string,
-    options?: Omit<ClientFetchOptions, 'contentType'>,
+    options?: Omit<FetchOptions, 'contentType'>,
   ): Promise<T> => {
     return clientFetch<T>(input, {
       method: 'DELETE',

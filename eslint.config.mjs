@@ -27,6 +27,7 @@ const eslintConfig = defineConfig([
           ignoreRestSiblings: true,
         },
       ],
+      '@next/next/no-img-element': 'off',
     },
   },
 ]);

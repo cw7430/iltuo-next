@@ -4,3 +4,4 @@ export {
   zNumberToString,
   zStringToNumber,
 } from './zod-helper';
+export { chunkArray } from './array';

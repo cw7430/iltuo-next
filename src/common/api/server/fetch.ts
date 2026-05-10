@@ -6,14 +6,25 @@ import {
   resolveContentType,
   resolveCacheOptions,
   resolveAuthOptions,
+  resloveQuery,
   resolveBody,
   API_BASE_URL,
-  type ServerFetchOptions,
+  type AuthType,
+  type CacheStrategy,
+  type ContentType,
 } from '@/common/api/shared/fetch';
+
+interface FetchOptions extends RequestInit {
+  next?: NextFetchRequestConfig;
+  baseUrl?: string;
+  authType?: AuthType;
+  cacheStrategy?: CacheStrategy;
+  contentType?: ContentType;
+}
 
 const serverFetch = async <T>(
   input: string,
-  options: ServerFetchOptions = {},
+  options: FetchOptions = {},
 ): Promise<T> => {
   const {
     authType = 'none',
@@ -44,16 +55,10 @@ const serverFetch = async <T>(
 export const ServerRequest = {
   apiGet: async <T>(
     input: string,
+    options?: Omit<FetchOptions, 'contentType'>,
     params?: Record<string, string | number | boolean | undefined>,
-    options?: Omit<ServerFetchOptions, 'contentType'>,
   ): Promise<T> => {
-    const query = params
-      ? `?${new URLSearchParams(
-          Object.entries(params)
-            .filter(([, v]) => v !== undefined)
-            .map(([k, v]) => [k, String(v)]),
-        )}`
-      : '';
+    const query = resloveQuery(params);
 
     return serverFetch<T>(`${input}${query}`, {
       method: 'GET',
@@ -63,8 +68,8 @@ export const ServerRequest = {
 
   apiPost: async <T, B = unknown>(
     input: string,
+    options?: FetchOptions,
     body?: B | FormData,
-    options?: ServerFetchOptions,
   ): Promise<T> => {
     return serverFetch<T>(input, {
       method: 'POST',
@@ -77,8 +82,8 @@ export const ServerRequest = {
 
   apiPut: async <T, B = unknown>(
     input: string,
+    options?: FetchOptions,
     body?: B | FormData,
-    options?: ServerFetchOptions,
   ): Promise<T> => {
     return serverFetch<T>(input, {
       method: 'PUT',
@@ -91,8 +96,8 @@ export const ServerRequest = {
 
   apiPatch: async <T, B = unknown>(
     input: string,
+    options?: FetchOptions,
     body?: B | FormData,
-    options?: ServerFetchOptions,
   ): Promise<T> => {
     return serverFetch<T>(input, {
       method: 'PATCH',
@@ -105,7 +110,7 @@ export const ServerRequest = {
 
   apiDelete: async <T = void>(
     input: string,
-    options?: Omit<ServerFetchOptions, 'contentType'>,
+    options?: Omit<FetchOptions, 'contentType'>,
   ): Promise<T> => {
     return serverFetch<T>(input, {
       method: 'DELETE',
