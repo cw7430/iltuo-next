@@ -2,15 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface AppConfigState {
-  isAutoSignIn: boolean;
-  setAutoSignIn: (isAutoSignIn: boolean) => void;
+  isAutoLogin: boolean;
+  setAutoLogin: (isAutoSignIn: boolean) => void;
 }
 
 export const useAppConfigStore = create<AppConfigState>()(
   persist(
     (set) => ({
-      isAutoSignIn: false,
-      setAutoSignIn: (isAutoSignIn: boolean) => set({ isAutoSignIn }),
+      isAutoLogin: false,
+      setAutoLogin: (isAutoLogin: boolean) => set({ isAutoLogin }),
     }),
     {
       name: 'app-config-storage',
