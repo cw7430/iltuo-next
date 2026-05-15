@@ -9,7 +9,9 @@ import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import '@/styles/style.css';
 import '@/styles/responsive.css';
 import '@/styles/jquery.mCustomScrollbar.min.css';
+import { me } from '@/features/user/request/server/models';
 import { ReactQueryProvider, Progressbar } from '@/common/components/layouts';
+import { AuthInitializer } from '@/features/user/components/layouts';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,15 +31,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const checkAccessToken = await me();
+
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <ReactQueryProvider>
+          <AuthInitializer checkAccessToken={checkAccessToken} />
           <Progressbar>{children}</Progressbar>
         </ReactQueryProvider>
       </body>

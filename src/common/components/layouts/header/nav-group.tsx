@@ -38,7 +38,7 @@ export default function NavGroup({ categories }: HeaderProps) {
             {'홈'}
           </Nav.Link>
           {categories.map((category) => {
-            const path = `/products/${category.majorCategoryId}`;
+            const path = `/product/${category.majorCategoryId}`;
 
             return (
               <Nav.Link
