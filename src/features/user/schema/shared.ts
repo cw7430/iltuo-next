@@ -17,6 +17,7 @@ export const loginAndRefreshResponseSchemaForServer =
     accessToken: z.string(),
     refreshToken: z.string(),
     refreshTokenExpiresAtMs: z.number(),
+    isAuto: z.boolean(),
   });
 
 export type AuthStateData = z.infer<typeof authStateDataSchema>;
@@ -35,8 +36,6 @@ export type AuthState = AuthStateData & {
   setHasHydrated: (v: boolean) => void;
 
   login: (data: LoginAndRefreshResponseDto) => void;
-
-  checkAuth: () => boolean;
 
   logout: () => void;
 };

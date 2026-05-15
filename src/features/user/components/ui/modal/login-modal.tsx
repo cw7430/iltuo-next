@@ -5,7 +5,7 @@ import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useShallow } from 'zustand/shallow';
-import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
+import { Button, Form, InputGroup, Modal, Spinner } from 'react-bootstrap';
 
 import { useAppConfigStore, useModalState } from '@/features/global/stores';
 import { useAuthStore } from '@/features/user/stores';
@@ -193,6 +193,7 @@ export default function LoginModal({ modalKey }: Props) {
               variant="primary"
               disabled={mutation.isPending}
             >
+              {mutation.isPending && <Spinner size="sm" />}
               {'로그인'}
             </Button>
           </div>

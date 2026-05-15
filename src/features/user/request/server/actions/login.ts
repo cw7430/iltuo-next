@@ -26,5 +26,5 @@ export const loginAction = async (body: LoginRequestDto) =>
       );
     }
 
-    return loginAndRefresh(res, body.isAuto);
+    return loginAndRefresh(res);
   });
