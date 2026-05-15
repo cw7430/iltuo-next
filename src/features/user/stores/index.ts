@@ -1,1 +1,1 @@
-export { useAuthStore } from './auth';
+export { useAuthStore, validateAuthIntegrity } from './auth';

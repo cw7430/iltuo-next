@@ -13,7 +13,7 @@ const initialState = {
   authType: null,
 };
 
-const validateAuthIntegrity = (state: AuthStateData) => {
+export const validateAuthIntegrity = (state: AuthStateData) => {
   const { accessTokenExpiresAtMs, authRole, authType } = state;
 
   return !!(
@@ -26,7 +26,7 @@ const validateAuthIntegrity = (state: AuthStateData) => {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       hasHydrated: false,
@@ -39,8 +39,6 @@ export const useAuthStore = create<AuthState>()(
           authRole: data.authRole,
           authType: data.authType,
         }),
-
-      checkAuth: () => validateAuthIntegrity(get()),
 
       logout: () => set(initialState),
     }),

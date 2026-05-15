@@ -12,7 +12,6 @@ import { ResponseCode } from '@/common/api/shared/constants';
 
 export const loginAndRefresh = async (
   res: ApiSuccessWithResult<LoginAndRefreshResponseDtoForServer>,
-  isAuto: boolean,
 ) => {
   const cookieStore = await cookies();
 
@@ -30,7 +29,7 @@ export const loginAndRefresh = async (
 
   const result = validation.data;
 
-  const refreshMaxAge = isAuto
+  const refreshMaxAge = result.isAuto
     ? Math.max(
         0,
         Math.floor((result.refreshTokenExpiresAtMs - Date.now()) / 1000),
@@ -62,6 +61,7 @@ export const loginAndRefresh = async (
     refreshToken: _refreshToken,
     refreshTokenExpiresAtMs: _refreshTokenExpiresAtMs,
     accessToken: _accessToken,
+    isAuto: _isAuto,
     ...clientData
   } = result;
 

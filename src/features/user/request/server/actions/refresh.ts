@@ -26,5 +26,5 @@ export const refreshAction = async (body: RefreshRequestDto) =>
       );
     }
 
-    return loginAndRefresh(res, body.isAuto);
+    return loginAndRefresh(res);
   });
