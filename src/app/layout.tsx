@@ -12,6 +12,7 @@ import '@/styles/jquery.mCustomScrollbar.min.css';
 import { me } from '@/features/user/request/server/models';
 import { ReactQueryProvider, Progressbar } from '@/common/components/layouts';
 import { AuthInitializer } from '@/features/user/components/layouts';
+import { DialogModal } from '@/common/components/ui';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -43,7 +44,10 @@ export default async function RootLayout({
       <body>
         <ReactQueryProvider>
           <AuthInitializer checkAccessToken={checkAccessToken} />
-          <Progressbar>{children}</Progressbar>
+          <Progressbar>
+            {children}
+            <DialogModal />
+          </Progressbar>
         </ReactQueryProvider>
       </body>
     </html>

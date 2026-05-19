@@ -8,6 +8,7 @@ import {
   SortNavGroup,
 } from '@/features/product/components/view';
 import { ProductCard } from '@/features/product/components/ui';
+import { CustomPagination } from '@/common/components/ui';
 
 interface Props {
   params: Promise<{ majorCategoryId: string }>;
@@ -19,13 +20,17 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   const {
     minerCategoryId = '0',
-    limit = '8',
+    page = '1',
+    size = '8',
+    blockSize = '5',
     sort = 'recommended',
   } = await searchParams;
 
   const queryParams = {
     minerCategoryId: (minerCategoryId ?? '0') as string,
-    limit: (limit ?? '8') as string,
+    page: Number(page ?? '1'),
+    size: Number(size ?? '8'),
+    blockSize: Number(blockSize ?? '5'),
     sort: ([
       'recommended',
       'priceAsc',
@@ -73,11 +78,18 @@ export default async function ProductPage({ params, searchParams }: Props) {
             <SortNavGroup currentSort={queryParams.sort} />
           </Row>
           <Row className="my-5 d-flex align-items-stretch">
-            {products.result.products.map((product, idx) => (
+            {products.result.products.content.map((product, idx) => (
               <Col lg={3} md={6} className="mb-4 d-flex" key={idx}>
                 <ProductCard product={product} isMainPage={false} />
               </Col>
             ))}
+          </Row>
+        </Container>
+        <Container>
+          <Row className="my-5 justify-content-center">
+            <Col xs="auto">
+              <CustomPagination data={products.result.products} />
+            </Col>
           </Row>
         </Container>
       </div>

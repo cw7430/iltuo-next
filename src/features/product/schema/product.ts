@@ -1,11 +1,14 @@
 import { z } from 'zod';
 
 import { zStringToBigInt } from '@/common/lib';
-import { categoryResponseSchema } from '@/features/global/schema';
+import {
+  categoryResponseSchema,
+  pageRequestSchema,
+  pageResponseSchema,
+} from '@/features/global/schema';
 
-export const productListRequestSchema = z.object({
+export const productListRequestSchema = pageRequestSchema.extend({
   minerCategoryId: z.string(),
-  limit: z.string(),
   sort: z.enum([
     'recommended',
     'priceAsc',
@@ -30,12 +33,16 @@ const productResponseSchema = z.object({
   deletedAt: z.coerce.date().nullable(),
 });
 
+const pagedProductListResponseSchema = pageResponseSchema.extend({
+  content: z.array(productResponseSchema),
+});
+
 export const recommendedProductListResponseSchema = z.array(
   productResponseSchema,
 );
 
 export const productListResponseSchema = categoryResponseSchema.extend({
-  products: recommendedProductListResponseSchema,
+  products: pagedProductListResponseSchema,
 });
 
 export type ProductListRequestDto = z.infer<typeof productListRequestSchema>;
