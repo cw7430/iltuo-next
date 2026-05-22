@@ -1,1 +1,5 @@
-export { getRecommendedProducts, getProductList } from './product.server';
+export {
+  getRecommendedProducts,
+  getProductList,
+  getDetailProduct,
+} from './product.server';
