@@ -6,6 +6,7 @@ import {
   pageRequestSchema,
   pageResponseSchema,
 } from '@/features/global/schema';
+import { optionListResponseSchema } from './option';
 
 export const productListRequestSchema = pageRequestSchema.extend({
   minerCategoryId: z.string(),
@@ -18,7 +19,7 @@ export const productListRequestSchema = pageRequestSchema.extend({
   ]),
 });
 
-const productResponseSchema = z.object({
+export const productResponseSchema = z.object({
   productId: z.string(),
   minerCategoryId: z.string(),
   productName: z.string(),
@@ -45,6 +46,10 @@ export const productListResponseSchema = categoryResponseSchema.extend({
   products: pagedProductListResponseSchema,
 });
 
+export const productDetailResponseSchema = productResponseSchema.extend({
+  options: optionListResponseSchema,
+});
+
 export type ProductListRequestDto = z.infer<typeof productListRequestSchema>;
 
 export type ProductResponseDto = z.infer<typeof productResponseSchema>;
@@ -54,3 +59,7 @@ export type RecommendedProductListResponseDto = z.infer<
 >;
 
 export type ProductListResponseDto = z.infer<typeof productListResponseSchema>;
+
+export type ProductDetailResponseDto = z.infer<
+  typeof productDetailResponseSchema
+>;

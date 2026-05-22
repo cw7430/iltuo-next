@@ -15,7 +15,7 @@ interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function ProductPage({ params, searchParams }: Props) {
+export default async function ProductListPage({ params, searchParams }: Props) {
   const { majorCategoryId } = await params;
 
   const {
