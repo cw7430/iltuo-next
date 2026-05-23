@@ -47,11 +47,13 @@ export default async function ProductListPage({ params, searchParams }: Props) {
       | 'createdDesc',
   };
 
-  const products = await getProductList(majorCategoryId, queryParams);
+  const res = await getProductList(majorCategoryId, queryParams);
 
-  if (products.code != ResponseCode.SUCCESS.code) {
-    throw new ApiError(products.code, products.message);
+  if (res.code != ResponseCode.SUCCESS.code) {
+    throw new ApiError(res.code, res.message);
   }
+
+  const data = res.result;
 
   return (
     <div className="coffee_section layout_padding">
@@ -59,7 +61,7 @@ export default async function ProductListPage({ params, searchParams }: Props) {
         <Row>
           <Col md={12}>
             <h1 className="coffee_taital">
-              {products.result.majorCategoryName ?? '카테고리 없음'}
+              {data.majorCategoryName ?? '카테고리 없음'}
             </h1>
           </Col>
         </Row>
@@ -67,7 +69,7 @@ export default async function ProductListPage({ params, searchParams }: Props) {
       <Container>
         <Row className="my-3 justify-content-center">
           <CategoryBtnGroup
-            products={products.result}
+            products={data}
             currentMinerCategoryId={queryParams.minerCategoryId}
           />
         </Row>
@@ -78,7 +80,7 @@ export default async function ProductListPage({ params, searchParams }: Props) {
             <SortNavGroup currentSort={queryParams.sort} />
           </Row>
           <Row className="my-5 d-flex align-items-stretch">
-            {products.result.products.content.map((product, idx) => (
+            {data.products.content.map((product, idx) => (
               <Col lg={3} md={6} className="mb-4 d-flex" key={idx}>
                 <ProductCard product={product} isMainPage={false} />
               </Col>
@@ -88,7 +90,7 @@ export default async function ProductListPage({ params, searchParams }: Props) {
         <Container>
           <Row className="my-5 justify-content-center">
             <Col xs="auto">
-              <CustomPagination data={products.result.products} />
+              <CustomPagination data={data.products} />
             </Col>
           </Row>
         </Container>
