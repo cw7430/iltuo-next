@@ -15,7 +15,7 @@ import {
   type ProductListRequestDto,
   type ProductListResponseDto,
   type ProductDetailResponseDto,
-  ProductResponseDto,
+  type ProductResponseDto,
 } from '@/features/product/schema';
 
 const { apiGet } = ServerRequest;

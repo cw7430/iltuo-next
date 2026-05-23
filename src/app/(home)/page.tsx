@@ -6,11 +6,13 @@ import { initializeRequest } from '@/common/request/server';
 import { HomeClient } from '@/features/global/components/views';
 
 export default async function Home() {
-  const recommendedProducts = (await initializeRequest()).recommendedProducts;
+  const res = (await initializeRequest()).recommendedProducts;
 
-  if (recommendedProducts.code != ResponseCode.SUCCESS.code) {
-    throw new ApiError(recommendedProducts.code, recommendedProducts.message);
+  if (res.code != ResponseCode.SUCCESS.code) {
+    throw new ApiError(res.code, res.message);
   }
+
+  const recommendedProducts = res.result;
 
   return (
     <div className="coffee_section layout_padding">
@@ -22,7 +24,7 @@ export default async function Home() {
         </Row>
       </Container>
       <div className="coffee_section_2">
-        <HomeClient recommendedProducts={recommendedProducts.result} />
+        <HomeClient recommendedProducts={recommendedProducts} />
       </div>
     </div>
   );

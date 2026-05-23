@@ -9,15 +9,17 @@ export default async function DefaultLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = (await initializeRequest()).categories;
+  const res = (await initializeRequest()).categories;
 
-  if (categories.code != ResponseCode.SUCCESS.code) {
-    throw new ApiError(categories.code, categories.message);
+  if (res.code != ResponseCode.SUCCESS.code) {
+    throw new ApiError(res.code, res.message);
   }
+
+  const categories = res.result;
 
   return (
     <>
-      <DefaultHeader categories={categories.result} />
+      <DefaultHeader categories={categories} />
       {children}
       <Footer />
     </>
