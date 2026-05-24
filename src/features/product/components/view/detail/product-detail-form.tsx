@@ -1,21 +1,54 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Form, InputGroup, Table } from 'react-bootstrap';
 
 import type {
   ProductDetailResponseDto,
   ProductResponseDto,
 } from '@/features/product/schema';
+import ProductDetailBackButton from './product-detail-back-button';
 
 interface Props {
   product: ProductDetailResponseDto | ProductResponseDto;
 }
 
 export default function ProductDetailForm({ product }: Props) {
+  const router = useRouter();
+
   const [totalPrice, setTotalPrice] = useState<bigint>(product.price);
+  const [detailOptions, setDetailOptions] = useState<string[]>([]);
 
   const quantityRef = useRef<HTMLInputElement>(null);
+
+  const hasOptions = 'options' in product;
+
+  const sanitizeQuantity = (value: number): number => {
+    if (isNaN(value) || value <= 0) return 1;
+    if (value > 99) return 99;
+    return value;
+  };
+
+  const getQuantity = (): number => {
+    const input = quantityRef.current;
+    if (!input) return 1;
+
+    const value = Number(input.value);
+    return sanitizeQuantity(value);
+  };
+
+  // const getOptionDelta = (
+  //   basePrice: bigint,
+  //   option: { optionType: 'RATE' | 'ABSOLUTE'; optionValue: bigint },
+  // ) => {
+  //   if (option.optionType === 'ABSOLUTE') {
+  //     return option.optionValue;
+  //   }
+
+  //   let result =
+
+  // };
 
   return (
     <>
@@ -37,11 +70,32 @@ export default function ProductDetailForm({ product }: Props) {
               </InputGroup>
             </td>
           </tr>
-          {'options' in product &&
+          {hasOptions &&
             product.options.map((option) => (
               <tr key={option.sortKey}>
                 <th scope="row">{option.optionName}</th>
-                <td></td>
+                <td>
+                  <InputGroup
+                    style={{
+                      maxWidth: '450px',
+                    }}
+                  >
+                    <Form.Select
+                      disabled={
+                        option.sortKey === '1'
+                          ? false
+                          : !detailOptions[Number(option.sortKey) - 2]
+                      }
+                    >
+                      <option value={'0'}>{'==선택=='}</option>
+                      {option.detailOptions.map((detail, idx) => (
+                        <option key={idx} value={detail.detailOptionId}>
+                          {detail.detailOptionName}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </InputGroup>
+                </td>
               </tr>
             ))}
           <tr>
@@ -53,7 +107,7 @@ export default function ProductDetailForm({ product }: Props) {
       <div className="d-flex justify-content-end align-items-center gap-2 mt-5 mb-5">
         <Button variant="primary">{'장바구니'}</Button>
         <Button variant="danger">{'바로구매'}</Button>
-        <Button variant="info">{'목록으로'}</Button>
+        <ProductDetailBackButton />
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Card } from 'react-bootstrap';
 
 import type { ProductResponseDto } from '@/features/product/schema';
@@ -13,11 +14,18 @@ interface Props {
 export default function ProductCard({ product, isMainPage = false }: Props) {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
 
+  const pathname = usePathname();
+
   return (
     <Card
       className="w-100"
       as={Link}
-      href={`/product/detail/${product.productId}`}
+      href={{
+        pathname: `/product/detail/${product.productId}`,
+        query: {
+          history: pathname,
+        },
+      }}
       style={{ cursor: 'pointer' }}
     >
       <div className="coffee_img">
