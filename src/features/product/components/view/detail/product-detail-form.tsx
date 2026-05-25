@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Form, InputGroup, Table } from 'react-bootstrap';
 
@@ -24,31 +24,42 @@ export default function ProductDetailForm({ product }: Props) {
 
   const hasOptions = 'options' in product;
 
-  const sanitizeQuantity = (value: number): number => {
-    if (isNaN(value) || value <= 0) return 1;
-    if (value > 99) return 99;
-    return value;
-  };
-
-  const getQuantity = (): number => {
+  const getQuantity = () => {
     const input = quantityRef.current;
     if (!input) return 1;
 
     const value = Number(input.value);
-    return sanitizeQuantity(value);
+    if (isNaN(value) || value <= 0) return 1;
+    if (value > 99) return 99;
+    return BigInt(value);
   };
 
-  // const getOptionDelta = (
-  //   basePrice: bigint,
-  //   option: { optionType: 'RATE' | 'ABSOLUTE'; optionValue: bigint },
-  // ) => {
-  //   if (option.optionType === 'ABSOLUTE') {
-  //     return option.optionValue;
-  //   }
+  const getOptionDelta = (
+    basePrice: bigint,
+    option: { optionType: 'RATE' | 'ABSOLUTE'; optionValue: bigint },
+  ) => {
+    if (option.optionType === 'ABSOLUTE') {
+      return option.optionValue;
+    }
 
-  //   let result =
+    const percentage = option.optionValue - 100n;
 
-  // };
+    return ((basePrice * percentage) / 100n / 10n) * 10n;
+  };
+
+  const applyOptionPrice = (
+    basePrice: bigint,
+    option: { optionType: 'RATE' | 'ABSOLUTE'; optionValue: bigint },
+  ) => {
+    return basePrice + getOptionDelta(basePrice, option);
+  };
+
+  const formatPriceDelta = (delta: bigint) => {
+    const prefix = delta >= 0n ? '+' : '-';
+    const absolute = delta < 0n ? -delta : delta;
+
+    return `${prefix}${absolute.toLocaleString()}원`;
+  };
 
   return (
     <>
