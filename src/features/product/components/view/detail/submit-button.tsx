@@ -2,6 +2,9 @@
 
 import { Button } from 'react-bootstrap';
 
+import { useAuthStore, validateAuthIntegrity } from '@/features/user/stores';
+import { useDialogModalState, useModalState } from '@/features/global/stores';
+
 interface Props {
   method: 'CART' | 'ORDER';
   productId: string;
@@ -17,7 +20,29 @@ export default function SubmitButton({
   options,
   validateOptions,
 }: Props) {
+  const showDialogModal = useDialogModalState((s) => s.showModal);
+  const showModal = useModalState((s) => s.showModal);
+  const isLoggedIn = useAuthStore((s) => validateAuthIntegrity(s));
+
+  const showAuthModal = () => {
+    if (!isLoggedIn) {
+      showDialogModal({
+        modal: 'alert',
+        title: '경고',
+        text: '로그인 하여주세요.',
+        handleAfterClose: () => {
+          showModal('Login');
+        },
+      });
+    }
+  };
+
   const onClick = () => {
+    if (!isLoggedIn) {
+      showAuthModal();
+      return;
+    }
+
     if (!validateOptions()) return;
 
     const body = {
@@ -25,7 +50,7 @@ export default function SubmitButton({
       options,
     };
 
-    const dummyData = `ID: ${productId}\nBody: ${JSON.stringify(
+    const dummyData = `Method:${method}\nID: ${productId}\nBody: ${JSON.stringify(
       { quantity: quantity.toLocaleString(), options: body.options },
       null,
       2,
