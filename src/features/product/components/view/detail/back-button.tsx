@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from 'react-bootstrap';
 
-export default function ProductDetailBackButton() {
+export default function BackButton() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
