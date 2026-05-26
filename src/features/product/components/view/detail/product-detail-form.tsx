@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Form, InputGroup, Table } from 'react-bootstrap';
 
@@ -18,20 +18,38 @@ export default function ProductDetailForm({ product }: Props) {
   const router = useRouter();
 
   const [totalPrice, setTotalPrice] = useState<bigint>(product.price);
-  const [detailOptions, setDetailOptions] = useState<string[]>([]);
-
-  const quantityRef = useRef<HTMLInputElement>(null);
+  const [selectedDetailOptions, setSelectedDetailOptions] = useState<string[]>(
+    [],
+  );
+  const [quantity, setQuantity] = useState<bigint>(1n);
 
   const hasOptions = 'options' in product;
 
-  const getQuantity = () => {
-    const input = quantityRef.current;
-    if (!input) return 1;
+  const updateTotalPrice = (currentQuantity: bigint) => {
+    calculateTotalPrice(currentQuantity, selectedDetailOptions);
+  };
 
-    const value = Number(input.value);
-    if (isNaN(value) || value <= 0) return 1;
-    if (value > 99) return 99;
+  const sanitizeQuantity = (value: number) => {
+    if (isNaN(value) || value <= 0) return 1n;
+    if (value > 99) return 99n;
     return BigInt(value);
+  };
+
+  const handleQuantityFormat = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = event.target.value.replace(/[^0-9]/g, '');
+    const rawNumber = Number(formattedValue || '1');
+    const sanitized = sanitizeQuantity(rawNumber);
+
+    setQuantity(sanitized);
+    updateTotalPrice(sanitized);
+  };
+
+  const handleQuantityBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const rawNumber = Number(event.target.value);
+    const sanitized = sanitizeQuantity(rawNumber);
+
+    setQuantity(sanitized);
+    updateTotalPrice(sanitized);
   };
 
   const getOptionDelta = (
@@ -61,6 +79,78 @@ export default function ProductDetailForm({ product }: Props) {
     return `${prefix}${absolute.toLocaleString()}원`;
   };
 
+  const calculateTotalPrice = (
+    quantity: bigint,
+    selectedOptionIds: string[],
+  ) => {
+    let price = product.price * quantity;
+
+    if (hasOptions && detailOptionMap) {
+      selectedOptionIds.forEach((id) => {
+        const option = detailOptionMap.get(id);
+        if (!option) return;
+        price = applyOptionPrice(price, {
+          optionType: option.optionType,
+          optionValue: option.optionValue,
+        });
+      });
+    }
+
+    setTotalPrice(price);
+  };
+
+  const getOptionLabel = (option: {
+    detailOptionName: string;
+    sortKey: string;
+    optionType: 'RATE' | 'ABSOLUTE';
+    optionValue: bigint;
+  }) => {
+    let price = product.price * quantity;
+
+    if (hasOptions && detailOptionMap) {
+      selectedDetailOptions.forEach((id, idx) => {
+        const opt = detailOptionMap.get(id);
+        if (!opt || idx + 1 >= Number(option.sortKey)) return;
+        price = applyOptionPrice(price, opt);
+      });
+    }
+
+    const delta = getOptionDelta(price, option);
+    return `${option.detailOptionName} (${formatPriceDelta(delta)})`;
+  };
+
+  const handleOptionChange = (sortKey: string, selectedId: string) => {
+    const idx = Number(sortKey);
+
+    const newDetailOptions = [...selectedDetailOptions];
+
+    if (selectedId === '0') {
+      const truncated = newDetailOptions.slice(0, idx - 1);
+      setSelectedDetailOptions(truncated);
+      calculateTotalPrice(quantity, truncated);
+      return;
+    }
+
+    newDetailOptions[idx - 1] = selectedId;
+    const truncated = newDetailOptions.slice(0, idx);
+    setSelectedDetailOptions(truncated);
+    calculateTotalPrice(quantity, truncated);
+  };
+
+  const detailOptionMap = hasOptions
+    ? new Map(
+        product.options
+          .flatMap((opt) =>
+            opt.detailOptions.map((dopt) => ({
+              ...dopt,
+              optionType: opt.optionType,
+              sortKey: opt.sortKey,
+            })),
+          )
+          .map((opt) => [opt.detailOptionId, opt]),
+      )
+    : undefined;
+
   return (
     <>
       <Table>
@@ -73,10 +163,11 @@ export default function ProductDetailForm({ product }: Props) {
               <InputGroup style={{ width: '80px' }}>
                 <Form.Control
                   type="number"
-                  ref={quantityRef}
-                  defaultValue={1}
+                  value={quantity.toString()}
                   min={1}
                   max={99}
+                  onChange={handleQuantityFormat}
+                  onBlur={handleQuantityBlur}
                 />
               </InputGroup>
             </td>
@@ -95,13 +186,24 @@ export default function ProductDetailForm({ product }: Props) {
                       disabled={
                         option.sortKey === '1'
                           ? false
-                          : !detailOptions[Number(option.sortKey) - 2]
+                          : !selectedDetailOptions[Number(option.sortKey) - 2]
+                      }
+                      onChange={(e) =>
+                        handleOptionChange(option.sortKey, e.target.value)
+                      }
+                      value={
+                        selectedDetailOptions[Number(option.sortKey) - 1] || '0'
                       }
                     >
                       <option value={'0'}>{'==선택=='}</option>
                       {option.detailOptions.map((detail, idx) => (
                         <option key={idx} value={detail.detailOptionId}>
-                          {detail.detailOptionName}
+                          {getOptionLabel({
+                            detailOptionName: detail.detailOptionName,
+                            sortKey: option.sortKey,
+                            optionType: option.optionType,
+                            optionValue: detail.optionValue,
+                          })}
                         </option>
                       ))}
                     </Form.Select>
