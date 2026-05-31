@@ -120,7 +120,7 @@ export default function LoginModal({ modalKey }: Props) {
           onChange={handleFormChange}
           noValidate
         >
-          <Form.Group className="mb-3" controlId="login.userId">
+          <Form.Group className="mb-3" controlId="login.userName">
             <Form.Label>{'아이디'}</Form.Label>
             <InputGroup>
               <Controller
