@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useIsMutating } from '@tanstack/react-query';
 import { useShallow } from 'zustand/shallow';
 import { Col, Row } from 'react-bootstrap';
@@ -9,6 +10,8 @@ import { useAuthStore, validateAuthIntegrity } from '@/features/user/stores';
 import { LoginModal, LogoutButton } from '@/features/user/components/ui';
 
 export default function BtnGroup() {
+  const router = useRouter();
+
   const loginModalKey = 'Login';
 
   const isUserMutating = useIsMutating() > 0;
@@ -20,10 +23,6 @@ export default function BtnGroup() {
       hasHydrated: s.hasHydrated,
     })),
   );
-
-  const showLoginModal = () => {
-    showModal(loginModalKey);
-  };
 
   if (!hasHydrated) {
     return null;
@@ -54,7 +53,7 @@ export default function BtnGroup() {
                 <Col xs={6}>
                   <button
                     type="button"
-                    onClick={showLoginModal}
+                    onClick={() => showModal(loginModalKey)}
                     disabled={isUserMutating}
                   >
                     <span className="user_icon">
@@ -64,7 +63,11 @@ export default function BtnGroup() {
                   </button>
                 </Col>
                 <Col xs={6}>
-                  <button type="button" disabled={isUserMutating}>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/user/register')}
+                    disabled={isUserMutating}
+                  >
                     {'회원가입'}
                   </button>
                 </Col>
