@@ -80,7 +80,7 @@ export default function RegisterForm() {
                 {...field}
                 isInvalid={!!errors.userName}
                 maxLength={25}
-                placeholder="아이디를 입력하세요"
+                placeholder="아이디를 입력하세요."
                 isValid={isUserNameValid}
               />
             )}
@@ -97,6 +97,108 @@ export default function RegisterForm() {
           <Form.Control.Feedback type="invalid">
             {errors.userName?.message}
           </Form.Control.Feedback>
+        </InputGroup>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="register.password">
+        <Form.Label>{'비밀번호 *'}</Form.Label>
+        <InputGroup>
+          <Controller
+            control={control}
+            name="password"
+            render={({ field }) => (
+              <Form.Control
+                type="password"
+                {...field}
+                isInvalid={!!errors.password}
+                maxLength={25}
+                placeholder="비밀번호를 입력하세요."
+              />
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.password?.message}
+          </Form.Control.Feedback>
+        </InputGroup>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="register.confirm-password">
+        <Form.Label>{'비밀번호 확인 *'}</Form.Label>
+        <InputGroup>
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <Form.Control
+                type="password"
+                {...field}
+                isInvalid={!!errors.confirmPassword}
+                maxLength={25}
+                placeholder="비밀번호를 다시 입력하세요."
+              />
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.confirmPassword?.message}
+          </Form.Control.Feedback>
+        </InputGroup>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="register.real-name">
+        <Form.Label>{'이름 *'}</Form.Label>
+        <InputGroup>
+          <Controller
+            control={control}
+            name="realName"
+            render={({ field }) => (
+              <Form.Control
+                type="text"
+                {...field}
+                isInvalid={!!errors.realName}
+                maxLength={100}
+                placeholder="이름을 입력해주세요."
+              />
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.realName?.message}
+          </Form.Control.Feedback>
+        </InputGroup>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="register.phone-number">
+        <Form.Label>{'휴대전화 번호 *'}</Form.Label>
+        <InputGroup>
+          <Controller
+            control={control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <Form.Control
+                type="text"
+                {...field}
+                isInvalid={!!errors.phoneNumber}
+                maxLength={15}
+                placeholder="휴대전화 번호를 입력해주세요."
+              />
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.phoneNumber?.message}
+          </Form.Control.Feedback>
+        </InputGroup>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="register.email">
+        <Form.Label>{'이메일 *'}</Form.Label>
+        <InputGroup>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field }) => (
+              <Form.Control
+                type="text"
+                {...field}
+                isInvalid={!!errors.email}
+                maxLength={100}
+                placeholder="이메일을 입력해주세요."
+              />
+            )}
+          />
         </InputGroup>
       </Form.Group>
     </Form>
