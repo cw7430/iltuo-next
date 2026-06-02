@@ -17,7 +17,7 @@ export const nativeRegisterRequestSchema = checkUserRequestSchema
       .min(1, '비밀번호를 입력해주세요.')
       .regex(
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}|:;"'<>,.?/~`]).{10,25}$/,
-        '비밀번호는 5자 이상 25자 이하, 영문 또는 영문, 숫자의 조합이어야 합니다.',
+        '비밀번호는 5자 이상 25자 이하, 영문, 숫자, 특수문자의 조합이어야 합니다.',
       ),
     confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요.'),
     realName: z.string().min(1, '이름을 입력해 주세요.'),
