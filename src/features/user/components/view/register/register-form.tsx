@@ -128,7 +128,7 @@ export default function RegisterForm() {
                 {...field}
                 isInvalid={!!errors.password}
                 maxLength={25}
-                placeholder="5자 이상 25자 이하, 영문, 숫자, 특수문자의 조합."
+                placeholder="10자 이상 25자 이하, 영문, 숫자, 특수문자의 조합."
                 disabled={isPending}
               />
             )}
