@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Form, InputGroup } from 'react-bootstrap';
+import { useRouter } from 'next/navigation';
+import { useIsMutating } from '@tanstack/react-query';
 import {
   useForm,
   Controller,
@@ -9,6 +10,7 @@ import {
   type SubmitHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Form, InputGroup } from 'react-bootstrap';
 
 import {
   nativeRegisterRequestSchema,
@@ -18,7 +20,13 @@ import { USER_KEYS } from '@/features/user/constants';
 import CheckUserButton from './check-user-button';
 
 export default function RegisterForm() {
-  const [isUserNameValid, setUserNameValid] = useState<boolean>(false);
+  const router = useRouter();
+
+  const isPending = useIsMutating({ mutationKey: USER_KEYS.checkUser }) > 0;
+
+  const [validatedUserName, setValidatedUserName] = useState<string | null>(
+    null,
+  );
 
   const registerForm = useForm<NativeRegisterRequestDto>({
     mode: 'onChange',
@@ -57,10 +65,18 @@ export default function RegisterForm() {
     alert(JSON.stringify(req, null, 2));
   };
 
-  const userName = useWatch({
+  const [userName, password, confirmPassword] = useWatch({
     control,
-    name: 'userName',
+    name: ['userName', 'password', 'confirmPassword'],
   });
+
+  const isUserNameValid = validatedUserName === userName;
+
+  const isPasswordMatch =
+    !!password &&
+    !!confirmPassword &&
+    !errors.password &&
+    password === confirmPassword;
 
   return (
     <Form
@@ -80,14 +96,15 @@ export default function RegisterForm() {
                 {...field}
                 isInvalid={!!errors.userName}
                 maxLength={25}
-                placeholder="아이디를 입력하세요."
+                placeholder="5자 이상 25자 이하, 영문 또는 영문, 숫자의 조합."
                 isValid={isUserNameValid}
+                disabled={isPending}
               />
             )}
           />
           <CheckUserButton
             isUserNameValid={isUserNameValid}
-            setUserNameValid={setUserNameValid}
+            setValidatedUserName={setValidatedUserName}
             setError={setError}
             userName={userName}
           />
@@ -111,7 +128,8 @@ export default function RegisterForm() {
                 {...field}
                 isInvalid={!!errors.password}
                 maxLength={25}
-                placeholder="비밀번호를 입력하세요."
+                placeholder="5자 이상 25자 이하, 영문, 숫자, 특수문자의 조합."
+                disabled={isPending}
               />
             )}
           />
@@ -133,11 +151,16 @@ export default function RegisterForm() {
                 isInvalid={!!errors.confirmPassword}
                 maxLength={25}
                 placeholder="비밀번호를 다시 입력하세요."
+                isValid={isPasswordMatch}
+                disabled={isPending}
               />
             )}
           />
           <Form.Control.Feedback type="invalid">
             {errors.confirmPassword?.message}
+          </Form.Control.Feedback>
+          <Form.Control.Feedback>
+            {'비밀번호가 일치합니다.'}
           </Form.Control.Feedback>
         </InputGroup>
       </Form.Group>
@@ -154,6 +177,7 @@ export default function RegisterForm() {
                 isInvalid={!!errors.realName}
                 maxLength={100}
                 placeholder="이름을 입력해주세요."
+                disabled={isPending}
               />
             )}
           />
@@ -175,6 +199,7 @@ export default function RegisterForm() {
                 isInvalid={!!errors.phoneNumber}
                 maxLength={15}
                 placeholder="휴대전화 번호를 입력해주세요."
+                disabled={isPending}
               />
             )}
           />
@@ -196,11 +221,33 @@ export default function RegisterForm() {
                 isInvalid={!!errors.email}
                 maxLength={100}
                 placeholder="이메일을 입력해주세요."
+                disabled={isPending}
               />
             )}
           />
         </InputGroup>
       </Form.Group>
+      <div className="d-flex gap-2">
+        <Button
+          variant="primary"
+          type="submit"
+          size="lg"
+          className="flex-fill"
+          disabled={isPending}
+        >
+          {'회원가입'}
+        </Button>
+        <Button
+          variant="danger"
+          type="button"
+          size="lg"
+          className="flex-fill"
+          onClick={() => router.push('/')}
+          disabled={isPending}
+        >
+          {'홈으로'}
+        </Button>
+      </div>
     </Form>
   );
 }

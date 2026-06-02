@@ -1,7 +1,7 @@
 'use client';
 
 import { type Dispatch, type SetStateAction } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useIsMutating } from '@tanstack/react-query';
 import type { UseFormSetError } from 'react-hook-form';
 import { Button, Spinner } from 'react-bootstrap';
 
@@ -13,14 +13,14 @@ import { ResponseCode } from '@/common/api/shared/constants';
 interface Props {
   setError: UseFormSetError<NativeRegisterRequestDto>;
   isUserNameValid: boolean;
-  setUserNameValid: Dispatch<SetStateAction<boolean>>;
+  setValidatedUserName: Dispatch<SetStateAction<string | null>>;
   userName: string;
 }
 
 export default function CheckUserButton({
   setError,
   isUserNameValid,
-  setUserNameValid,
+  setValidatedUserName,
   userName,
 }: Props) {
   const mutation = useMutation({
@@ -39,11 +39,11 @@ export default function CheckUserButton({
                 '서버에서 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
             });
         }
-        setUserNameValid(false);
+        setValidatedUserName(null);
         return;
       }
 
-      setUserNameValid(true);
+      setValidatedUserName(userName);
     },
     onError: () => {
       setError('root', {
@@ -51,6 +51,10 @@ export default function CheckUserButton({
       });
     },
   });
+
+  const isPending =
+    useIsMutating({ mutationKey: USER_KEYS.register }) > 0 ||
+    mutation.isPending;
 
   const onClick = () => {
     mutation.mutate({ userName });
@@ -60,9 +64,9 @@ export default function CheckUserButton({
     <Button
       variant="success"
       onClick={onClick}
-      disabled={isUserNameValid || mutation.isPending}
+      disabled={isUserNameValid || isPending}
     >
-      {mutation.isPending && <Spinner size="sm" />}
+      {isPending && <Spinner size="sm" />}
       {'중복체크'}
     </Button>
   );
