@@ -66,7 +66,7 @@ export default function CheckUserButton({
       onClick={onClick}
       disabled={isUserNameValid || isPending}
     >
-      {isPending && <Spinner size="sm" />}
+      {mutation.isPending && <Spinner size="sm" />}
       {'중복체크'}
     </Button>
   );
