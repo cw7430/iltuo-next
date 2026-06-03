@@ -5,3 +5,4 @@ export {
   zStringToNumber,
 } from './zod-helper';
 export { chunkArray } from './array';
+export { hypenPhone } from './format';

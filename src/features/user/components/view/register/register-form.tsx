@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useIsMutating } from '@tanstack/react-query';
+import { useMutation, useIsMutating } from '@tanstack/react-query';
 import {
   useForm,
   Controller,
@@ -10,19 +10,25 @@ import {
   type SubmitHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Form, InputGroup } from 'react-bootstrap';
+import { Button, Form, InputGroup, Spinner } from 'react-bootstrap';
 
 import {
   nativeRegisterRequestSchema,
   type NativeRegisterRequestDto,
 } from '@/features/user/schema';
+import { registerAction } from '@/features/user/request/server/actions';
 import { USER_KEYS } from '@/features/user/constants';
 import CheckUserButton from './check-user-button';
+import { hypenPhone } from '@/common/lib';
+import { ResponseCode } from '@/common/api/shared/constants';
+import { useAuthStore } from '@/features/user/stores';
+import { useDialogModalState } from '@/features/global/stores';
 
 export default function RegisterForm() {
   const router = useRouter();
 
-  const isPending = useIsMutating({ mutationKey: USER_KEYS.checkUser }) > 0;
+  const showDialogModal = useDialogModalState((s) => s.showModal);
+  const login = useAuthStore((s) => s.login);
 
   const [validatedUserName, setValidatedUserName] = useState<string | null>(
     null,
@@ -61,8 +67,55 @@ export default function RegisterForm() {
     }
   };
 
+  const mutation = useMutation({
+    mutationKey: USER_KEYS.register,
+    mutationFn: registerAction,
+    onSuccess: (res) => {
+      if (res.code !== ResponseCode.SUCCESS.code) {
+        switch (res.code) {
+          case ResponseCode.DUPLICATE_RESOURCE.code:
+            setError('userName', { message: '사용중인 아이디 입니다.' });
+            setValidatedUserName(null);
+            break;
+
+          default:
+            setError('root', {
+              message:
+                '서버에서 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            });
+        }
+        return;
+      }
+      login(res.result);
+      showDialogModal({
+        modal: 'alert',
+        title: '완료',
+        text: '회원 가입이 완료되었습니다.',
+        handleAfterClose: () => {
+          router.replace('/');
+        },
+      });
+    },
+    onError: () => {
+      setError('root', {
+        message: '서버에서 문제가 발생했습니다.',
+      });
+    },
+  });
+
   const onSubmit: SubmitHandler<NativeRegisterRequestDto> = (req) => {
-    alert(JSON.stringify(req, null, 2));
+    if (!isUserNameValid) {
+      setError('userName', { message: '아이디 중복체크를 해주세요.' });
+      return;
+    }
+    showDialogModal({
+      modal: 'confirm',
+      title: '확인',
+      text: '회원 가입을 진행하시겠습니까?',
+      handleAfterClose: () => {
+        mutation.mutate(req);
+      },
+    });
   };
 
   const [userName, password, confirmPassword] = useWatch({
@@ -77,6 +130,10 @@ export default function RegisterForm() {
     !!confirmPassword &&
     !errors.password &&
     password === confirmPassword;
+
+  const isPending =
+    useIsMutating({ mutationKey: USER_KEYS.checkUser }) > 0 ||
+    mutation.isPending;
 
   return (
     <Form
@@ -197,8 +254,9 @@ export default function RegisterForm() {
                 type="text"
                 {...field}
                 isInvalid={!!errors.phoneNumber}
-                maxLength={15}
+                maxLength={13}
                 placeholder="휴대전화 번호를 입력해주세요."
+                onChange={(e) => field.onChange(hypenPhone(e.target.value))}
                 disabled={isPending}
               />
             )}
@@ -225,8 +283,16 @@ export default function RegisterForm() {
               />
             )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.email?.message}
+          </Form.Control.Feedback>
         </InputGroup>
       </Form.Group>
+      {errors.root && (
+        <div className="d-block invalid-feedback mb-2">
+          {errors.root.message}
+        </div>
+      )}
       <div className="d-flex gap-2">
         <Button
           variant="primary"
@@ -235,6 +301,7 @@ export default function RegisterForm() {
           className="flex-fill"
           disabled={isPending}
         >
+          {mutation.isPending && <Spinner size="sm" />}
           {'회원가입'}
         </Button>
         <Button
