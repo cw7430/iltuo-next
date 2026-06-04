@@ -2,4 +2,4 @@ export {
   getRecommendedProducts,
   getProductList,
   getDetailProduct,
-} from './product.server';
+} from './product';

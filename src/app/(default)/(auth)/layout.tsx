@@ -9,7 +9,7 @@ export default async function DefaultAuthLayout({
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get('refreshToken')?.value;
   if (!refreshToken) {
-    redirect('/sign-in', 'replace');
+    redirect('/', 'replace');
   }
 
   return <>{children}</>;

@@ -14,7 +14,7 @@ export default function BtnGroup() {
 
   const loginModalKey = 'Login';
 
-  const isUserMutating = useIsMutating() > 0;
+  const isMutating = useIsMutating() > 0;
 
   const showModal = useModalState((s) => s.showModal);
   const { isLoggedIn, hasHydrated } = useAuthStore(
@@ -36,7 +36,11 @@ export default function BtnGroup() {
             {isLoggedIn && (
               <>
                 <Col xs={6}>
-                  <button type="button" disabled={isUserMutating}>
+                  <button
+                    type="button"
+                    disabled={isMutating}
+                    onClick={() => router.push('/user')}
+                  >
                     <span className="user_icon">
                       <i className="fa fa-user" aria-hidden="true"></i>
                     </span>
@@ -44,7 +48,7 @@ export default function BtnGroup() {
                   </button>
                 </Col>
                 <Col xs={6}>
-                  <LogoutButton disabled={isUserMutating} />
+                  <LogoutButton disabled={isMutating} />
                 </Col>
               </>
             )}
@@ -54,7 +58,7 @@ export default function BtnGroup() {
                   <button
                     type="button"
                     onClick={() => showModal(loginModalKey)}
-                    disabled={isUserMutating}
+                    disabled={isMutating}
                   >
                     <span className="user_icon">
                       <i className="fa fa-user" aria-hidden="true"></i>
@@ -66,7 +70,7 @@ export default function BtnGroup() {
                   <button
                     type="button"
                     onClick={() => router.push('/user/register')}
-                    disabled={isUserMutating}
+                    disabled={isMutating}
                   >
                     {'회원가입'}
                   </button>
