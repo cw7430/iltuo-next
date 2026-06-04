@@ -3,13 +3,13 @@ import { z } from 'zod';
 export const authStateDataSchema = z.object({
   accessTokenExpiresAtMs: z.number().nullable(),
   authRole: z.enum(['USER', 'ADMIN']).nullable(),
-  authType: z.enum(['NATIVE', 'SOCIAL']).nullable(),
+  authType: z.enum(['NATIVE', 'SOCIAL', 'CROSS']).nullable(),
 });
 
 export const loginAndRefreshResponseSchema = authStateDataSchema.extend({
   accessTokenExpiresAtMs: z.number(),
   authRole: z.enum(['USER', 'ADMIN']),
-  authType: z.enum(['NATIVE', 'SOCIAL']),
+  authType: z.enum(['NATIVE', 'SOCIAL', 'CROSS']),
 });
 
 export const loginAndRefreshResponseSchemaForServer =

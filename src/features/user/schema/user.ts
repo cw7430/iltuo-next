@@ -43,7 +43,21 @@ export const nativeRegisterRequestSchema = checkUserRequestSchema
     }
   });
 
+export const userResponseSchema = z.object({
+  userId: z.string(),
+  userName: z.string(),
+  realName: z.string().nullable(),
+  phoneNumber: z.string().nullable(),
+  email: z.string().nullable(),
+  authRole: z.enum(['USER', 'ADMIN']),
+  authType: z.enum(['NATIVE', 'SOCIAL', 'CROSS']),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  deletedAt: z.coerce.date().nullable(),
+});
+
 export type CheckUserRequestDto = z.infer<typeof checkUserRequestSchema>;
 export type NativeRegisterRequestDto = z.infer<
   typeof nativeRegisterRequestSchema
 >;
+export type UserResponseDto = z.infer<typeof userResponseSchema>;

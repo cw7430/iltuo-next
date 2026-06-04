@@ -13,6 +13,8 @@ export { logoutRequestSchema, type LogoutRequestDto } from './logout';
 export {
   checkUserRequestSchema,
   nativeRegisterRequestSchema,
+  userResponseSchema,
   type CheckUserRequestDto,
   type NativeRegisterRequestDto,
+  type UserResponseDto,
 } from './user';
