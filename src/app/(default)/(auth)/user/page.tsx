@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { Col, Container, Row } from 'react-bootstrap';
 
-import { UserProfile } from '@/features/user/components/view';
+import { UserAddress, UserProfile } from '@/features/user/components/view';
 import { getProfile } from '@/features/user/request/server/models';
 import { ResponseCode } from '@/common/api/shared/constants';
 import { ApiError } from '@/common/api/shared/error';
@@ -9,10 +9,11 @@ import { ApiError } from '@/common/api/shared/error';
 export default async function UserPage() {
   const profileRes = await getProfile();
 
-  if (profileRes.code != ResponseCode.SUCCESS.code) {
-    if (profileRes.code !== ResponseCode.UNAUTHORIZED.code) {
-      redirect('/', 'replace');
-    }
+  if (profileRes.code === ResponseCode.UNAUTHORIZED.code) {
+    redirect('/', 'replace');
+  }
+
+  if (profileRes.code !== ResponseCode.SUCCESS.code) {
     throw new ApiError(profileRes.code, profileRes.message);
   }
 
@@ -35,6 +36,13 @@ export default async function UserPage() {
             style={{ minWidth: '480px', maxWidth: '600px' }}
           >
             <UserProfile profile={profileData} />
+          </Col>
+          <Col
+            md={6}
+            className="mb-4"
+            style={{ minWidth: '480px', maxWidth: '600px' }}
+          >
+            <UserAddress />
           </Col>
         </Row>
       </Container>

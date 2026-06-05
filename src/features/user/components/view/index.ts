@@ -1,2 +1,2 @@
 export { RegisterForm } from './register';
-export { UserProfile } from './profile';
+export { UserProfile, UserAddress } from './user';
