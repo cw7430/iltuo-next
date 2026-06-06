@@ -18,3 +18,11 @@ export {
   type NativeRegisterRequestDto,
   type UserResponseDto,
 } from './user';
+export {
+  addressRequestSchema,
+  addressResponseSchema,
+  addressListResponseSchema,
+  type AddressRequestDto,
+  type AddressResponseDto,
+  type AddressListResponseDto,
+} from './address';
