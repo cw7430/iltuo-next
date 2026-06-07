@@ -38,6 +38,8 @@ export default async function UserPage() {
 
   const addressData = addressRes.result;
 
+  const addressFormKey = 'address-form';
+
   return (
     <div className="coffee_section layout_padding">
       <Container>
@@ -61,10 +63,13 @@ export default async function UserPage() {
             className="mb-4"
             style={{ minWidth: '480px', maxWidth: '600px' }}
           >
-            <UserAddress addressList={addressData} />
+            <UserAddress
+              addressList={addressData}
+              addressFormKey={addressFormKey}
+            />
           </Col>
         </Row>
-        <AddressForm elementKey="address-form" />
+        <AddressForm elementKey={addressFormKey} />
       </Container>
     </div>
   );
