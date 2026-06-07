@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const addressRequestSchema = z.object({
   postalCode: z.string().min(1, '우편 번호를 입력해 주세요.'),
   defaultAddress: z.string().min(1, '주소를 입력해 주세요.'),
-  detailAddress: z.string().nullable(),
-  extraAddress: z.string().nullable(),
+  detailAddress: z.string().optional(),
+  extraAddress: z.string().optional(),
 });
 
 export const addressResponseSchema = z.object({

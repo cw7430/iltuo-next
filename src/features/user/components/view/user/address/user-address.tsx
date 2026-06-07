@@ -2,12 +2,14 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 import { type AddressListResponseDto } from '@/features/user/schema';
 import AddressList from './address-list';
+import ShowAddressFormButton from './show-address-form-button';
 
 interface Props {
   addressList: AddressListResponseDto;
+  addressFormKey: string;
 }
 
-export default function UserAddress({ addressList }: Props) {
+export default function UserAddress({ addressList, addressFormKey }: Props) {
   return (
     <div className="card">
       <div className="card-header">
@@ -23,7 +25,11 @@ export default function UserAddress({ addressList }: Props) {
       <div className="card-footer">
         <Container>
           <Row className="text-end">
-            <Col></Col>
+            <Col>
+              {addressList.length < 5 && (
+                <ShowAddressFormButton elementKey={addressFormKey} />
+              )}
+            </Col>
           </Row>
         </Container>
       </div>
