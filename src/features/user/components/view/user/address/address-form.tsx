@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -17,6 +18,7 @@ import {
   addressRequestSchema,
   type AddressRequestDto,
 } from '@/features/user/schema';
+import PostCodeButton from './post-code-button';
 
 interface Props {
   elementKey: string;
@@ -43,6 +45,8 @@ export default function AddressForm({ elementKey }: Props) {
     handleSubmit,
     control,
     clearErrors,
+    setValue,
+    reset,
     formState: { errors },
   } = addressForm;
 
@@ -58,12 +62,18 @@ export default function AddressForm({ elementKey }: Props) {
     showDialogModal({
       modal: 'confirm',
       title: '확인',
-      text: '회원 가입을 진행하시겠습니까?',
+      text: '주소 등록을 진행하시겠습니까?',
       handleAfterClose: () => {
         alert(JSON.stringify(req, null, 2));
       },
     });
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+    }
+  }, [isOpen, reset]);
 
   return (
     <>
@@ -107,9 +117,7 @@ export default function AddressForm({ elementKey }: Props) {
                         </InputGroup>
                       </Col>
                       <Col xs="auto">
-                        <Button variant="secondary" type="button">
-                          {'주소 검색'}
-                        </Button>
+                        <PostCodeButton setValue={setValue} />
                       </Col>
                     </Row>
                     <Form.Group className="mb-2">
